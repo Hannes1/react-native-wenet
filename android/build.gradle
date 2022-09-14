@@ -9,6 +9,18 @@ buildscript {
   }
 }
 
+// allprojects {
+//     repositories {
+//         google()
+//         jcenter()
+//         maven { url 'https://jitpack.io' }
+//     }
+// }
+
+// task clean(type: Delete) {
+//     delete rootProject.buildDir
+// }
+
 def isNewArchitectureEnabled() {
   return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
 }
@@ -30,10 +42,26 @@ def getExtOrIntegerDefault(name) {
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
+  packagingOptions {
+    pickFirst 'lib/arm64-v8a/libc++_shared.so'
+    pickFirst '**/*.so'
+    exclude 'META-INF/DEPENDENCIES'
+  }
+      
+  configurations {
+        extractForNativeBuild
+  }
+
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
     buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    externalNativeBuild {
+      cmake {
+            targets  "wenet", "decoder_main"
+            cppFlags "-std=c++14", "-DC10_USE_GLOG", "-DC10_USE_MINIMAL_GLOG", "-DANDROID", "-Wno-c++11-narrowing", "-fexceptions"
+        }
+    }
   }
   buildTypes {
     release {
@@ -48,6 +76,12 @@ android {
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+
+  externalNativeBuild {
+      cmake {
+          path "src/main/cpp/CMakeLists.txt"
+      }
   }
 }
 
@@ -126,6 +160,12 @@ dependencies {
     //noinspection GradleDynamicVersion
   implementation "com.facebook.react:react-native:+"
 // From node_modules
+  //Wenet Stuff:
+  implementation 'org.pytorch:pytorch_android:1.10.0'
+  extractForNativeBuild 'org.pytorch:pytorch_android:1.10.0'
+
+  implementation 'com.github.pengzhendong:wenet-openfst-android:1.0.2'
+  extractForNativeBuild 'com.github.pengzhendong:wenet-openfst-android:1.0.2'
 }
 
 if (isNewArchitectureEnabled()) {
@@ -134,4 +174,25 @@ if (isNewArchitectureEnabled()) {
     libraryName = "Wenet"
     codegenJavaPackageName = "com.reactnativewenet"
   }
+}
+
+//Wenet
+task extractAARForNativeBuild {
+    doLast {
+        configurations.extractForNativeBuild.files.each {
+            def file = it.absoluteFile
+            copy {
+                from zipTree(file)
+                into "$buildDir/$file.name"
+                include "headers/**"
+                include "jni/**"
+            }
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name.contains('externalNativeBuild')) {
+        task.dependsOn(extractAARForNativeBuild)
+    }
 }

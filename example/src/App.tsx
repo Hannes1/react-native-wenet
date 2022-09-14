@@ -1,7 +1,9 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text } from 'react-native';
-import { multiply } from 'react-native-wenet';
+import { multiply, init, start } from 'react-native-wenet';
+import STT from 'react-native-wenet';
+import Wenet from './screens/wenet';
 
 export default function App() {
   const [result, setResult] = React.useState<number | undefined>();
@@ -12,7 +14,8 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <Text>Result: {result}</Text>
+      {/* <Wenet /> */}
+      <Text onPress={() => init()}>Result: {result}</Text>
     </View>
   );
 }
