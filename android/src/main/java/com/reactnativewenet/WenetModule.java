@@ -48,14 +48,18 @@ public class WenetModule extends ReactContextBaseJavaModule {
         promise.resolve(a * b);
     }
 
-    // Initialize the event emitter
+    /**
+     * Start The event emitter
+     * See https://reactnative.dev/docs/native-modules-android
+     */
     @ReactMethod
     public void init() {
         eventEmitter = reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
     }
 
     /**
-     * Easy mode for wenet-stt without any of the Audio Compression
+     * Easy mode for wenet-stt without any of the Audio Compression using media
+     * recorder
      */
     @ReactMethod
     public void start() {
@@ -67,12 +71,20 @@ public class WenetModule extends ReactContextBaseJavaModule {
     public void stop(Promise promise) {
         eventEmitter.emit("onRecordingStateChange", false);
         // Stops Encoder
-        if (mEncoderOffline != null) {
-            audioPollerOffline.stopPolling();
-            String FilePath = mEncoderOffline.stop();
-            promise.resolve(FilePath);
-        }
+        offlineSTT.toggleRecording(true);
+        promise.resolve("TodoSendBackFilePath");
     }
+
+    // @ReactMethod
+    // public void stop(Promise promise) {
+    // eventEmitter.emit("onRecordingStateChange", false);
+    // // Stops Encoder
+    // if (mEncoderOffline != null) {
+    // audioPollerOffline.stopPolling();
+    // String FilePath = mEncoderOffline.stop();
+    // promise.resolve(FilePath);
+    // }
+    // }
 
     @ReactMethod
     public void pause() {

@@ -43,9 +43,19 @@ android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   packagingOptions {
-    pickFirst 'lib/arm64-v8a/libc++_shared.so'
-    pickFirst '**/*.so'
-    exclude 'META-INF/DEPENDENCIES'
+     pickFirst '**/*.so'
+    // excludes = [
+    //          "**/libc++_shared.so",
+    //     //      "**/libfbjni.so",
+    //     //      "**/libjsi.so",
+    //     //      "**/libreact_nativemodule_core.so",
+    //     //      "**/libturbomodulejsijni.so",
+    //     //      'META-INF/DEPENDENCIES',
+    //     //      'META-INF/NOTICE',
+    //     //     'META-INF/LICENSE',
+    //     //     'META-INF/LICENSE.txt',
+    //     //     'META-INF/NOTICE.txt'
+    // ]
   }
       
   configurations {
@@ -88,6 +98,9 @@ android {
 repositories {
   mavenCentral()
   google()
+  maven{
+      url "https://oss.sonatype.org/content/repositories/snapshots"
+  }
 
   def found = false
   def defaultDir = null
@@ -192,7 +205,7 @@ task extractAARForNativeBuild {
 }
 
 tasks.whenTaskAdded { task ->
-    if (task.name.contains('externalNativeBuild')) {
+    if (task.name.contains("externalNative") || task.name.contains("CMake")) {
         task.dependsOn(extractAARForNativeBuild)
     }
 }
