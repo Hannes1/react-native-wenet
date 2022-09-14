@@ -64,7 +64,7 @@ public class WenetModule extends ReactContextBaseJavaModule {
     public void stop(Promise promise) {
         eventEmitter.emit("onRecordingStateChange", false);
         // Stops Encoder
-        offlineSTT.toggleRecording(true);
+        offlineSTT.toggleRecording(false);
         promise.resolve("TodoSendBackFilePath");
     }
 
