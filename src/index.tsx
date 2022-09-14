@@ -19,10 +19,6 @@ const Wenet = NativeModules.Wenet
 
 const EventEmitter = new NativeEventEmitter(Wenet);
 
-export function multiply(a: number, b: number): Promise<number> {
-  return Wenet.multiply(a, b);
-}
-
 export function init() {
   return Wenet.init();
 }
