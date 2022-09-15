@@ -22,6 +22,10 @@ yarn example android
 
 This is a react native module of the amazing [Wenet](https://github.com/wenet-e2e/wenet) framework. We at [Writtan](https://www.writtan.com) absolutely love the simplicity of wenet and plan on integrating it into our own app. We would appreciate any help with this module please see the todo at the bottom.
 
+## Disclaimer
+
+This is a work in progress and the package might change drastically in the future!
+
 ## Android
 
 You are required to provide a wenet model to use this package. In your file tree it should be located in `android\app\src\main\assets`.
