@@ -19,7 +19,15 @@ yarn example android
 
 ## About
 
-This is a react native module of the amazing [Wenet](https://github.com/wenet-e2e/wenet) framework. Currently wenet only supports android, this this package will only work on android devices at this moment
+This is a react native module of the amazing [Wenet](https://github.com/wenet-e2e/wenet) framework. We at [Writtan](https://www.writtan.com) absolutely love the simplicity of wenet and plan on integrating it into our own app. We would appreciate any help with this module please see the todo at the bottom.
+
+## Android
+
+You are required to provide a wenet model to use this package. In your file tree it should be located in `android\app\src\main\assets`.
+
+## IOS
+
+No support for ios yet :(
 
 ## Usage
 
@@ -46,8 +54,10 @@ const handleStop = async () => {
 ## Todo
 
 - [ ] Create documentation
-- [ ] Reduce package size
-- [ ] Convert module to use JSI
+- [ ] Reduce package size (maybe move to pytorch-android-light, see what c++ can be removed)
+- [ ] Convert module to send data with JSI
+- [ ] Add timestamps to the final results
+- [ ] Add ability to download new models inside the app
 - [ ] Create ios version (also not implemented in wenet yet)
 
 ## Contributing
