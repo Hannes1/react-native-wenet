@@ -22,6 +22,7 @@
 #include "frontend/wav.h"
 #include "post_processor/post_processor.h"
 #include "utils/log.h"
+#include "utils/json.h"
 #include "utils/string.h"
 
 namespace wenet
@@ -107,6 +108,31 @@ namespace wenet
     feature_pipeline->set_input_finished();
   }
 
+  //Update the result to return additional information
+  void UpdateResult(bool final_result) {
+    json::JSON obj;
+    obj["type"] = final_result ? "final_result" : "partial_result";
+    int nbest = final_result ? nbest_ : 1;
+    obj["nbest"] = json::Array();
+    for (int i = 0; i < nbest && i < decoder_->result().size(); i++) {
+      json::JSON one;
+      one["sentence"] = decoder_->result()[i].sentence;
+      if (final_result && enable_timestamp_) {
+        one["word_pieces"] = json::Array();
+        for (const auto& word_piece : decoder_->result()[i].word_pieces) {
+          json::JSON piece;
+          piece["word"] = word_piece.word;
+          piece["start"] = word_piece.start;
+          piece["end"] = word_piece.end;
+          one["word_pieces"].append(piece);
+        }
+      }
+      one["sentence"] = decoder_->result()[i].sentence;
+      obj["nbest"].append(one);
+    }
+    result_ = obj.dump();
+  }
+
   void decode_thread_func()
   {
     while (true)
@@ -115,12 +141,14 @@ namespace wenet
       if (state == kEndFeats || state == kEndpoint)
       {
         decoder->Rescoring();
+        UpdateResult(true);
       }
 
       std::string result;
       if (decoder->DecodedSomething())
       {
-        result = decoder->result()[0].sentence;
+        //result = decoder->result()[0].sentence;
+        result = result_;
       }
 
       if (state == kEndFeats)
