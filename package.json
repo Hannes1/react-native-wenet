@@ -31,9 +31,11 @@
     "bootstrap": "yarn example && yarn && yarn example pods"
   },
   "keywords": [
-    "react-native",
+    "android",
     "ios",
-    "android"
+    "react-native",
+    "speech",
+    "voice"
   ],
   "repository": "https://github.com/Hannes1/react-native-wenet",
   "author": "Hannes Bezuidenhout <hannesdehanbez@gmail.com> (https://github.com/Hannes1)",
