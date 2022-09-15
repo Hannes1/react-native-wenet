@@ -5,6 +5,7 @@ React Native Speech to Text using wenet
 ## Installation
 
 ```sh
+#Not yet ready
 npm install react-native-wenet
 ```
 
@@ -63,6 +64,11 @@ const handleStop = async () => {
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
+
+## Acknowledge
+
+1. Most of the code is written by the good people at [Wenet](https://github.com/wenet-e2e/wenet)
+2. I plan on using a lot of [Playtorch](https://github.com/facebookresearch/playtorch) code for writing jsi (linking c++ and react native)
 
 ## License
 
