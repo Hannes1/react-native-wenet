@@ -24,18 +24,31 @@ This is a react native module of the amazing [Wenet](https://github.com/wenet-e2
 ## Usage
 
 ```js
-import { multiply } from "react-native-wenet";
+import Wenet, { Event } from 'react-native-wenet';
 
-// ...
+React.useEffect(() => {
+  Wenet.setupSTT();
+  //Need to request audio permission here
+}, []);
 
-const result = await multiply(3, 7);
+const handleStart = async () => {
+  Wenet.startSTT(); //Start the service
+  Wenet.addEventListener(Event.Result, (data) => {
+    setResult(data); //Returns the results
+  });
+};
+
+const handleStop = async () => {
+  Wenet.stopSTT();
+};
 ```
 
 ## Todo
 
 - [ ] Create documentation
+- [ ] Reduce package size
 - [ ] Convert module to use JSI
-- [ ] Create ios version
+- [ ] Create ios version (also not implemented in wenet yet)
 
 ## Contributing
 
