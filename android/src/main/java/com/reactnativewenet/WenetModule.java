@@ -46,7 +46,7 @@ public class WenetModule extends ReactContextBaseJavaModule {
      * See https://reactnative.dev/docs/native-modules-android
      */
     @ReactMethod
-    public void init() {
+    public void setupSTT() {
         eventEmitter = reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class);
     }
 

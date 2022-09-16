@@ -1,6 +1,6 @@
 {
   "name": "react-native-wenet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -31,9 +31,11 @@
     "bootstrap": "yarn example && yarn && yarn example pods"
   },
   "keywords": [
-    "react-native",
+    "android",
     "ios",
-    "android"
+    "react-native",
+    "speech",
+    "voice"
   ],
   "repository": "https://github.com/Hannes1/react-native-wenet",
   "author": "Hannes Bezuidenhout <hannesdehanbez@gmail.com> (https://github.com/Hannes1)",
@@ -118,7 +120,8 @@
           "singleQuote": true,
           "tabWidth": 2,
           "trailingComma": "es5",
-          "useTabs": false
+          "useTabs": false,
+          "endOfLine": "auto"
         }
       ]
     }

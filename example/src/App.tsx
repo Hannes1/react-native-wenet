@@ -1,14 +1,14 @@
 import * as React from 'react';
 
 import { StyleSheet, View, Text, Button } from 'react-native';
-import { STT } from 'react-native-wenet';
+import Wenet, { Event } from 'react-native-wenet';
 import { request, PERMISSIONS } from 'react-native-permissions';
 
 export default function App() {
-  const [result, setResult] = React.useState<string>('No Results Yet');
+  const [result, setResult] = React.useState<string | null>('No Results Yet');
 
   React.useEffect(() => {
-    STT.init();
+    Wenet.setupSTT();
     request(PERMISSIONS.ANDROID.RECORD_AUDIO).then((r) => {
       console.log('🚀 ~ file: App.tsx ~ line 17 ~ request ~ result', r);
       // …
@@ -18,14 +18,14 @@ export default function App() {
   const handleStart = async () => {
     //await Audio.requestPermissionsAsync();
     setResult('');
-    STT.start();
-    STT.on('onResponse', (data) => {
+    Wenet.startSTT();
+    Wenet.addEventListener(Event.Result, (data) => {
       setResult(data);
     });
   };
 
   const handleStop = async () => {
-    STT.stop();
+    Wenet.stopSTT();
   };
 
   return (
