@@ -11,7 +11,8 @@ npm install react-native-wenet
 
 ### Example App
 
-To run the example app just fork the repository and run the following
+To run the example app just fork the repository and run the following.
+Need to provide the wenet model in the example app folder inside `android\app\src\main\assets`
 
 ```sh
 yarn
