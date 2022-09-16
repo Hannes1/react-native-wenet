@@ -35,6 +35,8 @@ namespace wenet
   std::shared_ptr<DecodeResource> resource;
   DecodeState state = kEndBatch;
   std::string total_result; // NOLINT
+  std::string result_;
+  bool enable_timestamp = true;
 
   void init(JNIEnv *env, jobject, jstring jModelDir)
   {
@@ -72,27 +74,6 @@ namespace wenet
     state = kEndBatch;
     total_result = "";
   }
-  // void accept_waveform(JNIEnv *env, jobject, jbyteArray jWaveform) {
-  //   jsize size = env->GetArrayLength(jWaveform);
-  //   std::vector<signed char> waveform(size);
-  //   env->GetByteArrayRegion(jWaveform, 0, size, &waveform[0]);
-  //   std::vector<float> floatWaveform(waveform.begin(), waveform.end());
-  //   feature_pipeline->AcceptWaveform(floatWaveform);
-  //   LOG(INFO) << "wenet accept waveform in ms: "
-  //             << int(floatWaveform.size() / 16);
-  // }
-
-  // short Array
-  // void accept_waveform(JNIEnv *env, jobject, jshortArray jWaveform)
-  // {
-  //   jsize size = env->GetArrayLength(jWaveform);
-  //   std::vector<int16_t> waveform(size);
-  //   env->GetShortArrayRegion(jWaveform, 0, size, &waveform[0]);
-  //   std::vector<float> floatWaveform(waveform.begin(), waveform.end());
-  //   feature_pipeline->AcceptWaveform(floatWaveform);
-  //   LOG(INFO) << "wenet accept waveform in ms: "
-  //             << int(floatWaveform.size() / 16);
-  // }
 
   void accept_waveform(JNIEnv *env, jobject, jshortArray jWaveform)
   {
@@ -108,18 +89,46 @@ namespace wenet
     feature_pipeline->set_input_finished();
   }
 
-  //Update the result to return additional information
+/** Get decode result in json format
+ *  It returns partial result when last is 0
+ *  It returns final result when last is 1
+
+    {
+      "nbest" : [{
+          "sentence" : "are you okay"
+          "word_pieces" : [{
+              "end" : 960,
+              "start" : 0,
+              "word" : "are"
+            }, {
+              "end" : 1200,
+              "start" : 960,
+              "word" : "you"
+            }, {
+            ...}]
+        }, {
+          "sentence" : "are you ok"
+        }],
+      "type" : "final_result"
+    }
+
+    "type": final_result/partial_result
+    "nbest": nbest is enabled when n > 1 in final_result
+        "sentence": the ASR result
+        "word_pieces": optional, output timestamp when enabled
+ */
+
   void UpdateResult(bool final_result) {
     json::JSON obj;
     obj["type"] = final_result ? "final_result" : "partial_result";
-    int nbest = final_result ? nbest_ : 1;
+    int nbest = 1; // Set it at one for now
     obj["nbest"] = json::Array();
-    for (int i = 0; i < nbest && i < decoder_->result().size(); i++) {
+    for (int i = 0; i < nbest && i < decoder->result().size(); i++) {
       json::JSON one;
-      one["sentence"] = decoder_->result()[i].sentence;
-      if (final_result && enable_timestamp_) {
+      one["sentence"] = decoder->result()[i].sentence;
+      if (final_result && enable_timestamp) {
         one["word_pieces"] = json::Array();
-        for (const auto& word_piece : decoder_->result()[i].word_pieces) {
+        for (const auto& word_piece : decoder->result()[i].word_pieces) {
           json::JSON piece;
           piece["word"] = word_piece.word;
           piece["start"] = word_piece.start;
@@ -127,7 +136,7 @@ namespace wenet
           one["word_pieces"].append(piece);
         }
       }
-      one["sentence"] = decoder_->result()[i].sentence;
+      one["sentence"] = decoder->result()[i].sentence;
       obj["nbest"].append(one);
     }
     result_ = obj.dump();
@@ -161,6 +170,7 @@ namespace wenet
       {
         LOG(INFO) << "wenet endpoint final result: " << result;
         total_result += result + "，";
+        UpdateResult(true);
         decoder->ResetContinuousDecoding();
       }
       else
@@ -197,7 +207,7 @@ namespace wenet
       result = decoder->result()[0].sentence;
     }
     LOG(INFO) << "wenet ui result: " << total_result + result;
-    return env->NewStringUTF((total_result + result).c_str());
+    return env->NewStringUTF((result).c_str());
   }
 } // namespace wenet
 

@@ -1,6 +1,7 @@
 # react-native-wenet
 
 React Native Speech to Text using wenet
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/Hannes1/react-native-wenet/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/Hannes1/react-native-wenet/tree/master)
 
 ## Installation
 
@@ -11,8 +12,8 @@ npm install react-native-wenet
 
 ### Example App
 
-To run the example app just fork the repository and run the following.
-Need to provide the wenet model in the example app folder inside `android\app\src\main\assets`
+To run the example app just clone the repository and run the following
+Need to provide the wenet model inside the example app folder: `android\app\src\main\assets`
 
 ```sh
 yarn

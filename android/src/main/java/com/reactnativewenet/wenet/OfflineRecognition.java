@@ -24,7 +24,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 public class OfflineRecognition {
 
-  Context c;
+  Context context;
   DeviceEventManagerModule.RCTDeviceEventEmitter eventEmitter;
   private static final String LOG_TAG = "WENET";
   private static final int SAMPLE_RATE = 16000; // The sampling rate
@@ -36,29 +36,6 @@ public class OfflineRecognition {
   private AudioRecord record = null;
   private int miniBufferSize = 0; // 1280 bytes 648 byte 40ms, 0.04s
   private final BlockingQueue<short[]> bufferQueue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
-
-  // Loads the Wenet model
-  public static String assetFilePath(Context context, String assetName) {
-    File file = new File(context.getFilesDir(), assetName);
-    if (file.exists() && file.length() > 0) {
-      return file.getAbsolutePath();
-    }
-
-    try (InputStream is = context.getAssets().open(assetName)) {
-      try (OutputStream os = new FileOutputStream(file)) {
-        byte[] buffer = new byte[4 * 1024];
-        int read;
-        while ((read = is.read(buffer)) != -1) {
-          os.write(buffer, 0, read);
-        }
-        os.flush();
-      }
-      return file.getAbsolutePath();
-    } catch (IOException e) {
-      Log.e(LOG_TAG, "Error process asset " + assetName + " to file path");
-    }
-    return null;
-  }
 
   public static void assetsInit(Context context) throws IOException {
     AssetManager assetMgr = context.getAssets();
@@ -84,16 +61,12 @@ public class OfflineRecognition {
 
   public OfflineRecognition(Context c, DeviceEventManagerModule.RCTDeviceEventEmitter emit) {
     eventEmitter = emit;
-    this.c = c; // Get context from react
+    this.context = c; // Get context from react
     initModule(c);
   }
 
   private void initModule(Context context) {
     initRecoder();
-    // final String modelPath = new File(assetFilePath(c,
-    // "final.zip")).getAbsolutePath();
-    // final String dictPath = new File(assetFilePath(c,
-    // "words.txt")).getAbsolutePath();
     try {
       assetsInit(context);
     } catch (IOException e) {
