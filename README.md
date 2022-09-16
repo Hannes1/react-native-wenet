@@ -61,7 +61,7 @@ const handleStop = async () => {
 - [ ] Create documentation
 - [ ] Convert module to send data with JSI
 - [ ] Add timestamps to the final results
-- [ ] Seperate Final result from partial result (Not just 1 big final)
+- [ ] Separate Final result from partial result (Not just 1 big final)
 - [ ] Add ability to download new models inside the app
 - [ ] Reduce package size (maybe move to pytorch-android-light, see what c++ can be removed)
 - [ ] Create ios version (also not implemented in wenet yet)
